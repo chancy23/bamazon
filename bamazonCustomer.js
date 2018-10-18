@@ -39,18 +39,19 @@ function startOrder(){
     //call the DB to connect to products table
     connection.query("SELECT * FROM products", function(err, res){
         if (err) throw err;
-        //use inquirer to ask which ID
+        //use inquirer to ask which ID, make sure its a number and also one of our IDs in the DB
         inquirer.prompt([
             {
                 name: "productID",
                 type: "input",
                 message: "Which Product ID do you want to order?",
                 validate: function(value){
-                    if(isNaN(value) === false){
+                    //validate that the number is an actual number and within our ID range
+                    if(isNaN(value) === false && value < res.length + 1){
                         return true;
                     }
                     else {
-                        console.log("  That is not a valid number, please try again.");
+                        console.log(" | That is not a valid Product ID, please try again.");
                         return false;
                     };
                 }
@@ -68,13 +69,10 @@ function startOrder(){
                     chosenProduct = res[i].name;
                     chosenProductStock = res[i].stock_quantity;
                     chosenProductPrice = res[i].price;
-                };  
+                    //display the chosen item
+                    console.log("\nYou've selected: " + chosenProduct +"\n");
+                }; 
             };
-            //display the chosen item
-            console.log("You've selected: " + chosenProduct);
-
-
-            //if entered item is not in the db ask them to try again
             
             //then ask how many units of it they want
             inquirer.prompt([
@@ -87,7 +85,7 @@ function startOrder(){
                             return true;
                         }
                         else {
-                            console.log("  That is not a valid number, please try again.");
+                            console.log(" | That is not a valid number, please try again.");
                             return false;
                         };
                     }
@@ -95,34 +93,73 @@ function startOrder(){
             ]).then(function(answer){
                 //variable to hold the answer/input amount as an integer
                 var orderedNum = parseInt(answer.quantity);
-                console.log("the is the amount ordered: " + orderedNum);
 
-                //testing
-                console.log("Amount Available in DB: " + chosenProductStock);
-                console.log("Item Price in DB: " + chosenProductPrice);
+                //create variable to hold the remaining stock number (to use when updating the DB)
+                var remainingStock = chosenProductStock - orderedNum;
+                
+                //testing section for variables
+                // console.log("the is the amount ordered: " + orderedNum);
+                // console.log("Amount Available in DB: " + chosenProductStock);
+                // console.log("this is the remaining stock: " + remainingStock);
+                // console.log("Item Price in DB: " + chosenProductPrice);
 
                 //if insufficient stock, tell them so
                 if (orderedNum > chosenProductStock){
-                    console.log("I'm sorry, we don't have that may in stock");
-                    //show the available amount from the DB
-                    console.log("We have this many available for purchase: " + chosenProductStock);
-                    //ask them if they want to enter a smaller amount
+                    
+                    //Advise of insuffcient inventory and then show the available amount from the DB
+                    console.log("\nI'm sorry, we don't have that may in stock.\n\rWe have " + chosenProductStock + " available for purchase\n");
+
+                    // //ask them if they want to enter a smaller amount
+                    inquirer.prompt([
+                        {
+                            name: "reDoQuantity",
+                            type: "confirm",
+                            message: "Would you like to order a smaller quantity?", 
+                            default: true 
+                        }
+                    ]).then(function(answer){
+                        if (!answer.reDoQuantity){
+                            //exit out of system (need to figure out how to show command line, not an empty line)
+                            console.log("\nThanks, come back anytime!");
+                            return false;
+                        }
+                        //if they do, restart order process
+                        else {
+                            startOrder();
+                        }
+                    });
                 }
                 else {
-                    //process order
-                    console.log("Congratulations, your order has been placed!")
-
                     //show the amount of the order (quanity * number)
                     var orderTotal = orderedNum * chosenProductPrice;
-                    console.log("Your order total is: $" + orderTotal);
-                    //and update the db with the amount ordered from the quanity column
-                };
+                    //process the order and print
+                    console.log("\nCongratulations, your order has been placed! \nYour order total is: $" + orderTotal);
 
+                    //and finally update the db with the amount ordered subtracted from the quanity column
+                    connection.query("UPDATE products SET ? WHERE ?", 
+                        [
+                            {
+                            //what to actually change (the SET)
+                            stock_quantity: remainingStock
+                            },{
+                            //in what row (the WHERE)
+                            name: chosenProduct
+                            }
+                        ], 
+                        function(err, res){
+                            if(err) throw err;
+                            //testing
+                            //console.log(res.affectedRows + " updated");
+                        }
+                    ); 
+                    startOrder()
+                };
             });
         });
     });
 
 };
+
 
 
    
