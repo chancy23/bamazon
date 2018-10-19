@@ -32,3 +32,27 @@ Create a MySQL Database called `bamazon`.
 8. However, if your store _does_ have enough of the product, you should fulfill the customer's order.
    * This means updating the SQL database to reflect the remaining quantity.
    * Once the update goes through, show the customer the total cost of their purchase.
+
+   
+
+### Challenge #2: Manager View (Next Level)
+
+* Create a new Node application called `bamazonManager.js`. Running this application will:
+
+  * List a set of menu options:
+
+    * View Products for Sale
+    
+    * View Low Inventory
+    
+    * Add to Inventory
+    
+    * Add New Product
+
+  * If a manager selects `View Products for Sale`, the app should list every available item: the item IDs, names, prices, and quantities.
+
+  * If a manager selects `View Low Inventory`, then it should list all items with an inventory count lower than five.
+
+  * If a manager selects `Add to Inventory`, your app should display a prompt that will let the manager "add more" of any item currently in the store.
+
+  * If a manager selects `Add New Product`, it should allow the manager to add a completely new product to the store.
