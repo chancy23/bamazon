@@ -57,11 +57,11 @@ function startOrder(){
                 }
             }
         ]).then(function(answer){
-            //create a variables to hold the chosen product id's name, quantity and price from the db
+            //create a variables to hold the chosen product id's name, quantity and price and product sales total from the db
             var chosenProduct;
-            //used when we ask how many, later
             var chosenProductStock;
             var chosenProductPrice;
+            var chosenProductSales;
 
             //loop through all items in the db to match the inputted id to variables
             for (var i = 0; i < res.length; i++) {
@@ -69,6 +69,7 @@ function startOrder(){
                     chosenProduct = res[i].name;
                     chosenProductStock = res[i].stock_quantity;
                     chosenProductPrice = res[i].price;
+                    chosenProductSales = res[i].product_sales;
                     //display the chosen item
                     console.log("\nYou've selected: " + chosenProduct +"\n");
                 }; 
@@ -102,6 +103,7 @@ function startOrder(){
                 // console.log("Amount Available in DB: " + chosenProductStock);
                 // console.log("this is the remaining stock: " + remainingStock);
                 // console.log("Item Price in DB: " + chosenProductPrice);
+                // console.log("Total Product Sales in DB: " + chosenProductSales);
 
                 //if insufficient stock, tell them so
                 if (orderedNum > chosenProductStock){
@@ -133,14 +135,18 @@ function startOrder(){
                     //show the amount of the order (quanity * number)
                     var orderTotal = orderedNum * chosenProductPrice;
                     //process the order and print
-                    console.log("\nCongratulations, your order has been placed! \nYour order total is: $" + orderTotal);
+                    console.log("\nCongratulations, your order has been placed! \nYour order total is: $" + orderTotal + "\n\r");
 
-                    //and finally update the db with the amount ordered subtracted from the quanity column
+                    //add the current sale to the total in the DB to update in the DB
+                    var newProductSalesTotal = orderTotal + chosenProductSales
+
+                    //and finally update the db with the amount ordered subtracted from the quanity column and the orderTotal to the Product Sales column
                     connection.query("UPDATE products SET ? WHERE ?", 
                         [
                             {
                             //what to actually change (the SET)
-                            stock_quantity: remainingStock
+                            stock_quantity: remainingStock,
+                            product_sales: newProductSalesTotal
                             },{
                             //in what row (the WHERE)
                             name: chosenProduct
@@ -152,12 +158,32 @@ function startOrder(){
                             //console.log(res.affectedRows + " updated");
                         }
                     ); 
-                    startOrder()
+                    placeAnotherOrder()
                 };
             });
         });
     });
+};
 
+function placeAnotherOrder(){
+    inquirer.prompt([
+        {
+            name: "anotherOrder",
+            type: "confirm",
+            message: "Would you like to place another order?"
+        }
+    ]).then(function(answer){
+        if (answer.anotherOrder){
+            //if yes, then show items and ask for id
+            showItems();
+        
+        }
+        else {
+            console.log("\n\rThank you, come back again!");
+            //how to exit out of it?
+            return;
+        };
+    });
 };
 
 
