@@ -2,6 +2,21 @@
 var inquirer = require("inquirer");
 var mysql = require("mysql");
 
+//for cli-table package
+var Table = require("cli-table");
+
+// instantiate table for all items
+var tableAll = new Table({
+    head: ["Department ID", "Name", "Price($)", "Inventory"],
+    colWidths: [20, 35, 15, 15]
+});
+
+// instantiate table for low inventory items (need a new table so that tables don't combine when displayed more than once)
+var tableLow = new Table({
+    head: ["Department ID", "Name", "Price($)", "Inventory"],
+    colWidths: [20, 35, 15, 15]
+});
+
 //create db connection 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -15,7 +30,7 @@ var connection = mysql.createConnection({
 connection.connect(function(err, res){
     if (err) throw err;
     console.log("connected with ID: " + connection.threadId);
-    //call function to show items avialalbe to order
+    //call function to show items avialable to order
     managerStart();
 });
 
@@ -49,22 +64,19 @@ function managerStart(){
 };
 
 function showAllInventory(){
-    connection.query("SELECT * FROM products", function(err, res){
+    connection.query("SELECT id, name, price, stock_quantity FROM products", function(err, res){
         if (err) throw err;
         //display all products from DB table
-        console.log("\nAll Products\n\r\nID |  Name  |  Price($)  |  Inventory\n");
         for (var i = 0; i < res.length; i++){
-            console.log(res[i].id + "  |  " + res[i].name + "  |  " + res[i].price + "  |  " +res[i].stock_quantity);
+            tableAll.push([res[i].id, res[i].name, res[i].price, res[i].stock_quantity]);
         };
-        console.log("\n");
-        //call start process for manager
-        //managerStart()
+        //display the table
+        console.log("\n\rAll Inventory\n" + tableAll.toString() + "\n\r");
     });
-
 };
 
 function showLowInventory(){
-    connection.query("SELECT * FROM products WHERE stock_quantity<?", [5], function(err, res){
+    connection.query("SELECT id, name, price, stock_quantity FROM products WHERE stock_quantity<?", [5], function(err, res){
         if (err) throw err;
         //if there are no low stock items, show a message saying so and show start menu
         if (res.length <1) {
@@ -72,11 +84,12 @@ function showLowInventory(){
             managerStart();
         }
         else {
-            console.log("\nLow inventory Items (less than 5 units)\n\r\nID |  Name  |  Price($)  |  Inventory\n");
+            //loop through results to get low inventory items and push to the table
             for (var i = 0; i < res.length; i++){
-                console.log(res[i].id + "  |  " + res[i].name + "  |  " + res[i].price + "  |  " +res[i].stock_quantity);
+                tableLow.push([res[i].id, res[i].name, res[i].price, res[i].stock_quantity]);
             };
-            console.log("\n");
+            //display the table
+            console.log("\n\rLow Inventory Items (Less than 5 units)\n" + tableLow.toString() + "\n\r");
 
             //Then ask if they want to add inventory
             inquirer.prompt([
@@ -89,6 +102,7 @@ function showLowInventory(){
                 //if yes, call the add low inventory function
                 if(answer.addMoreInventory){
                     addInventory();
+                    //return;
                 }
                 else {
                     //if not start over
@@ -100,7 +114,7 @@ function showLowInventory(){
 };
 
 function addInventory(){
-    //call function to show the items
+    //call function to show the items from the DB
     showAllInventory();
     // then query the DB to start this function
     connection.query("SELECT * FROM products", function(err, res){
@@ -162,21 +176,20 @@ function addInventory(){
             ]).then(function(answer){
                 //add the answer to the currrent inventory to get the new inventory amount (parseInt each value to change to a number from a string)
                 newInventoryAmount = parseInt(answer.updateAmount) + parseInt(chosenProductInventory);
-                //console.log("This is the new inventory amount to send to DB: " + newInventoryAmount);
             
                 //then send that new number to the DB
                 connection.query("UPDATE products SET ? WHERE ?", [
-                        {
-                            //new quantity
-                            stock_quantity: newInventoryAmount
-                        },{
-                            //on which rows
-                            id: chosenProductID
-                        }
-                    ], function(err, res){
+                    {
+                        //update new quantity
+                        stock_quantity: newInventoryAmount
+                    },{
+                        //tells us which item to update
+                        id: chosenProductID
+                    }
+                ], function(err, res){
                     if (err) throw err;
                     console.log("\nSuccess!\n" + chosenProductName + "'s inventory has been updated to: " + newInventoryAmount + "\n\r");
-                    return managerStart();
+                    managerStart();
                 });
             });
         });
@@ -223,6 +236,7 @@ function addProduct(){
             }
         }
     ]).then(function(answer){
+        //add the item into the db
         connection.query("INSERT INTO products SET ?", [
             {
                 name: answer.newProdName,
@@ -234,7 +248,6 @@ function addProduct(){
         function(err, res){
             if (err) throw err;
             console.log("\n\r\n\rSuccess! You've added a new product.\n\rName: "  + answer.newProdName + "\n\rDepartment: " + answer.newProdDept + "\n\rPrice: " + answer.newProdPrice + "\n\rQuantity: " + answer.newProdQuantity + "\n\r\n\r")
-            //showAllInventory();
             managerStart();
         });
     });

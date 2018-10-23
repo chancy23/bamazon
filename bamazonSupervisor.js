@@ -2,6 +2,15 @@
 var inquirer = require("inquirer");
 var mysql = require("mysql");
 
+//for cli-table package
+var Table = require("cli-table");
+
+// instantiate table
+var table = new Table({
+    head: ["Deptartment ID", "Department Name", "Overhead Costs ", "Products Sales", "Total Profit"],
+    colWidths: [20, 20, 20, 20, 20]
+});
+
 //create db connection 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -43,22 +52,21 @@ function supervisorStart(){
 
 //function to view sales by department
 function viewSales(){
-    //query database and join the 2 tables to display as a table
+    //query database and join the 2 tables to display as one table
     connection.query("SELECT department_id, department_name, overhead_costs, SUM(product_sales) AS dept_prod_sales FROM products AS p " +
     "INNER JOIN departments AS d ON p.department = d.department_name " +
-    // "WHERE dept_prod_sales >= 0 " + //how to get it to show all, even if there have been no sales, this says its an unknown col??
+    // "WHERE dept_prod_sales >= 0 " + //how to get it to show all, even if there have been no sales yet, this says its an unknown col??
     "GROUP BY d.department_name " +
     "ORDER BY d.department_id ASC", function(err, res){
         if (err) throw err;
-        //console.log the header for the table
-        console.log("\nProduct Sales By Department\n\r\n\rDepartment ID  |  Department Name  |  Overhead Costs  |   Products Sales  |  Total Profit\n");
-        //loop throug the results and display
+        //loop throug the results and push to the table array
         for (var i = 0; i < res.length; i++){
-            //create a variable to hold the profit for each dept (overhead cost - prod sales for the dept)
             var totalProfit = res[i].overhead_costs - res[i].dept_prod_sales;
-            console.log(res[i].department_id + "  |  " + res[i].department_name + "  |  " + res[i].overhead_costs + "  |  " + res[i].dept_prod_sales + "  |  " + totalProfit);//need for each dept)
+            table.push([res[i].department_id, res[i].department_name, res[i].overhead_costs, res[i].dept_prod_sales, totalProfit]);
         };
-        console.log("\n\r");
+        //display the table
+        //Note: if the same option is chosen more than once it keeps appending to the table, so have multiple rows of same content, how to fix?
+        console.log("\n\rProduct Sales by Department\n" + table.toString() + "\n\r");
         supervisorStart();
     })
 };
@@ -112,6 +120,6 @@ function createDept(){
             if (err) throw err;
             console.log("\nSuccess! You've added the department: " + answers.newDeptName + "\n\r");
             supervisorStart();
-        })
-    })
+        });
+    });
 };

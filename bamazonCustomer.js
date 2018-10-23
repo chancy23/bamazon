@@ -25,7 +25,7 @@ function showItems(){
         if (err) throw err;
         console.log("\nAll Products\n\r\nProduct ID  |  Name  |  Department  | Price($)\n");
         for (var i = 0; i < res.length; i++){
-            console.log(res[i].id + "  |  " + res[i].name + "  |  " + res[i].department + "  |  " +res[i].price);
+           console.log(res[i].id + "  |  " + res[i].name + "  |  " + res[i].department + "  |  " +res[i].price);
         };
         console.log("\n");
         //call function to start order process
@@ -36,6 +36,7 @@ function showItems(){
 
 //function to start order process
 function startOrder(){
+    
     //call the DB to connect to products table
     connection.query("SELECT * FROM products", function(err, res){
         if (err) throw err;
@@ -176,7 +177,6 @@ function placeAnotherOrder(){
         if (answer.anotherOrder){
             //if yes, then show items and ask for id
             showItems();
-        
         }
         else {
             console.log("\n\rThank you, come back again!");

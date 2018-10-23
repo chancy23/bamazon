@@ -1,64 +1,43 @@
-# bamazon
+# bamazon App
 
-Create a MySQL Database called `bamazon`.
-
-2. Then create a Table inside of that database called `products`.
-
-3. The products table should have each of the following columns:
-
-   * item_id (unique id for each product)
-
-   * product_name (Name of product)
-
-   * department_name
-
-   * price (cost to customer)
-
-   * stock_quantity (how much of the product is available in stores)
-
-4. Populate this database with around 10 different products. (i.e. Insert "mock" data rows into this database and table).
-
-5. Then create a Node application called `bamazonCustomer.js`. Running this application will first display all of the items available for sale. Include the ids, names, and prices of products for sale.
-
-6. The app should then prompt users with two messages.
-
-   * The first should ask them the ID of the product they would like to buy.
-   * The second message should ask how many units of the product they would like to buy.
-
-7. Once the customer has placed the order, your application should check if your store has enough of the product to meet the customer's request.
-
-   * If not, the app should log a phrase like `Insufficient quantity!`, and then prevent the order from going through.
-
-8. However, if your store _does_ have enough of the product, you should fulfill the customer's order.
-   * This means updating the SQL database to reflect the remaining quantity.
-   * Once the update goes through, show the customer the total cost of their purchase.
-
-   
-
-### Challenge #2: Manager View (Next Level)
-
-* Create a new Node application called `bamazonManager.js`. Running this application will:
-
-  * List a set of menu options:
-
-    * View Products for Sale
-    
-    * View Low Inventory
-    
-    * Add to Inventory
-    
-    * Add New Product
-
-  * If a manager selects `View Products for Sale`, the app should list every available item: the item IDs, names, prices, and quantities.
-
-  * If a manager selects `View Low Inventory`, then it should list all items with an inventory count lower than five.
-
-  * If a manager selects `Add to Inventory`, your app should display a prompt that will let the manager "add more" of any item currently in the store.
-
-  * If a manager selects `Add New Product`, it should allow the manager to add a completely new product to the store.
+##Overview
+This is a Command Line Interface (CLI) App that has includes 3 different files, based on the user's role
+  --Customer (Used to place orders via the app).
+  --Manager (used to view all available products, view only low inventory items, add inventory to any available product, and add a new products).
+  --Supervsior (used to view product sales and profit by department, and to create new departments).
+  
+The information for this app is stored in a MySQL Database with 2 tables (products and departments). To initialize the DB please see the bamazonSchema.sql file.
 
 
-### Challenge #3: Supervisor View (Final Level)
+##Customer Functionality
+
+1. The customer is show all available products for sale (ID, Name, Department, and Cost)
+2. They are then asked which ID they want to purchase followed by a second question, asking how many items.
+      * If there is not enough units available, they are advised so, and asked to enter a smaller quantity.
+      * Otherwise they are told their order was a success and give a total for their order and asked if they want to order another item.
+3. (Not visible to customer) The database is updated with the new inventory amount (minus the order quanity), and the order total is added to the product sales total for the item's department.
+
+
+##Manager Functionality
+
+* The manager is present with  the following options:
+
+  1. View Products for Sale
+    * Shows all available item's ID, Name, pPice, and Quantity.
+
+  2. View Low Inventory Items
+    * Shows the same information as the all products, but only displays products with inventory less than 5 units available.
+    * If there are no low inventory items, a message advising this displays.
+
+  3. Add to Inventory
+    * Manager is prompted to pick an ID to add inventory, then asked how much to add, then displays the new total for the item
+
+  4. Add New Product
+    * Manager is prompted for the new product's name, cost, inventory amount (an ID is automatically assigned in the DB).
+    * Then a success message and the item is listed.
+
+
+##Supervisor Functionality
 
 1. Create a new MySQL table called `departments`. Your table should include the following columns:
 
