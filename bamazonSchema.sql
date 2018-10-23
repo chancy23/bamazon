@@ -10,7 +10,7 @@ CREATE TABLE products(
     department VARCHAR(100) NULL,
     price DECIMAL(10,2) NULL,
     stock_quantity INT(10) NULL,
-    product_sales DECIMAL(10,2) NULL DEFAULT 100
+    product_sales DECIMAL(10,2) NULL DEFAULT 100000
 );
 
 INSERT INTO products(name, department, price, stock_quantity)
@@ -35,9 +35,9 @@ CREATE TABLE departments(
 
 INSERT INTO departments(department_id, department_name, overhead_costs)
 VALUES(1, "books", 50000),
-(2, "music", 100000),
+(2, "music", 90000),
 (3, "housewares", 75000),
-(4, "electronics", 200000);
+(4, "electronics", 120000);
 
 SELECT * FROM products;
 

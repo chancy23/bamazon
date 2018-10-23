@@ -59,9 +59,9 @@ function viewSales(){
     "GROUP BY d.department_name " +
     "ORDER BY d.department_id ASC", function(err, res){
         if (err) throw err;
-        //loop throug the results and push to the table array
+        //loop through the results and push to the table array
         for (var i = 0; i < res.length; i++){
-            var totalProfit = res[i].overhead_costs - res[i].dept_prod_sales;
+            var totalProfit = res[i].dept_prod_sales - res[i].overhead_costs;
             table.push([res[i].department_id, res[i].department_name, res[i].overhead_costs, res[i].dept_prod_sales, totalProfit]);
         };
         //display the table
@@ -118,7 +118,8 @@ function createDept(){
         ], 
         function(err, res){
             if (err) throw err;
-            console.log("\nSuccess! You've added the department: " + answers.newDeptName + "\n\r");
+            console.log("\nSuccess! You've added the department: " + answers.newDeptName + 
+            "\n\r=========================================\n\r");
             supervisorStart();
         });
     });

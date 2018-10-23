@@ -188,7 +188,8 @@ function addInventory(){
                     }
                 ], function(err, res){
                     if (err) throw err;
-                    console.log("\nSuccess!\n" + chosenProductName + "'s inventory has been updated to: " + newInventoryAmount + "\n\r");
+                    console.log("\nSuccess!\n" + chosenProductName + "'s inventory has been updated to: " + newInventoryAmount + 
+                    "\n\r==========================================================================");
                     managerStart();
                 });
             });
@@ -247,7 +248,9 @@ function addProduct(){
         ],
         function(err, res){
             if (err) throw err;
-            console.log("\n\r\n\rSuccess! You've added a new product.\n\rName: "  + answer.newProdName + "\n\rDepartment: " + answer.newProdDept + "\n\rPrice: " + answer.newProdPrice + "\n\rQuantity: " + answer.newProdQuantity + "\n\r\n\r")
+            console.log("\n\r\n\rSuccess! You've added a new product.\n\rName: "  + answer.newProdName + "\n\rDepartment: " + 
+            answer.newProdDept + "\n\rPrice: " + answer.newProdPrice + "\n\rQuantity: " + answer.newProdQuantity +
+            "\n\r=================================================");
             managerStart();
         });
     });

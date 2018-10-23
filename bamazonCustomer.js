@@ -25,7 +25,7 @@ function showItems(){
         if (err) throw err;
         console.log("\nAll Products\n\r\nProduct ID  |  Name  |  Department  | Price($)\n");
         for (var i = 0; i < res.length; i++){
-           console.log(res[i].id + "  |  " + res[i].name + "  |  " + res[i].department + "  |  " +res[i].price);
+           console.log(res[i].id + "  |  " + res[i].name + "  |  " + res[i].department + "  |  " + res[i].price);
         };
         console.log("\n");
         //call function to start order process
