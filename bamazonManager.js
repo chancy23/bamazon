@@ -1,7 +1,6 @@
 //requires for inquirer and mysql
 var inquirer = require("inquirer");
 var mysql = require("mysql");
-
 //for cli-table package
 var Table = require("cli-table");
 
@@ -26,15 +25,12 @@ var connection = mysql.createConnection({
     database: "bamazon_DB"
 });
 
-//connect to db
 connection.connect(function(err, res){
     if (err) throw err;
     console.log("connected with ID: " + connection.threadId);
-    //call function to show items avialable to order
     managerStart();
 });
 
-//inqurier to choose from the list of options 
 function managerStart(){
     inquirer.prompt([
         {
@@ -88,7 +84,7 @@ function showLowInventory(){
             for (var i = 0; i < res.length; i++){
                 tableLow.push([res[i].id, res[i].name, res[i].price, res[i].stock_quantity]);
             };
-            //display the table
+
             console.log("\n\rLow Inventory Items (Less than 5 units)\n" + tableLow.toString() + "\n\r");
 
             //Then ask if they want to add inventory
@@ -99,13 +95,10 @@ function showLowInventory(){
                     message: "Would you like to add more inventory?"
                 }
             ]).then(function(answer){
-                //if yes, call the add low inventory function
                 if(answer.addMoreInventory){
                     addInventory();
-                    //return;
                 }
                 else {
-                    //if not start over
                     managerStart();
                 };
             }); 
@@ -114,12 +107,10 @@ function showLowInventory(){
 };
 
 function addInventory(){
-    //call function to show the items from the DB
     showAllInventory();
     // then query the DB to start this function
     connection.query("SELECT * FROM products", function(err, res){
         if (err) throw err;
-        //need to ask which product ID to update inventory on
         inquirer.prompt([
             {
                 name: "productID",
@@ -139,7 +130,6 @@ function addInventory(){
         ]).then(function(answer){
             // set answer to a variable (and parse to an actual number)
             var chosenProductID = parseInt(answer.productID)
-            //declare variables to assign data to for the rest of the function
             var chosenProductName;
             var chosenProductInventory;
             var newInventoryAmount;
@@ -156,7 +146,6 @@ function addInventory(){
             // console.log("this is the product Name chosen " + chosenProductName);
             // console.log("this is the product Inventory chosen " + chosenProductInventory);
 
-            //ask how much inventory they want to add
             inquirer.prompt([
                 {
                     name: "updateAmount",
@@ -177,7 +166,6 @@ function addInventory(){
                 //add the answer to the currrent inventory to get the new inventory amount (parseInt each value to change to a number from a string)
                 newInventoryAmount = parseInt(answer.updateAmount) + parseInt(chosenProductInventory);
             
-                //then send that new number to the DB
                 connection.query("UPDATE products SET ? WHERE ?", [
                     {
                         //update new quantity
@@ -237,7 +225,6 @@ function addProduct(){
             }
         }
     ]).then(function(answer){
-        //add the item into the db
         connection.query("INSERT INTO products SET ?", [
             {
                 name: answer.newProdName,

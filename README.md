@@ -1,14 +1,15 @@
-# bamazon App
+# Bamazon App
 
 ##Overview
 This is a Command Line Interface (CLI) App that has includes 3 different files, based on the user's role
-  --Customer (Used to place orders via the app).
-  --Manager (used to view all available products, view only low inventory items, add inventory to any available product, and add a new products).
-  --Supervsior (used to view product sales and profit by department, and to create new departments).
-  
-The information for this app is stored in a MySQL Database with 2 tables (products and departments). To initialize the DB please see the bamazonSchema.sql file.
+  -- Customer (Used to place orders via the app).
+  -- Manager (used to view all available products, view only low inventory items, add inventory to any available product, and add a new products).
+  -- Supervsior (used to view product sales and profit by department, and to create new departments).
 
-[click for database schema and seed data](bamazonSchema.sql)
+##Video Demo
+You can view the screenshots for each user's roles and all possible use cases, or view a video demo of all 3 floes (no errors) here: https://drive.google.com/open?id=1uiu-oVU9oDjVr7u53-FOVRZtT6Dvj1l_
+  
+The information for this app is stored in a MySQL Database with 2 tables (products and departments). To initialize the DB please see the bamazonSchema.sql file. [click for database schema and seed data](bamazonSchema.sql)
 
 
 ##Customer Functionality

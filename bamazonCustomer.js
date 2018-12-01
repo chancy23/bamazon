@@ -19,7 +19,6 @@ connection.connect(function(err, res){
     showItems();
 });
 
-//function to display all items in the db
 function showItems(){
     connection.query("SELECT id, name, department, price FROM products", function(err, res){
         if (err) throw err;
@@ -28,15 +27,11 @@ function showItems(){
            console.log(res[i].id + "  |  " + res[i].name + "  |  " + res[i].department + "  |  " + res[i].price);
         };
         console.log("\n");
-        //call function to start order process
         startOrder();
     });
 };
 
-
-//function to start order process
 function startOrder(){
-    
     //call the DB to connect to products table
     connection.query("SELECT * FROM products", function(err, res){
         if (err) throw err;
@@ -58,13 +53,11 @@ function startOrder(){
                 }
             }
         ]).then(function(answer){
-            //create a variables to hold the chosen product id's name, quantity and price and product sales total from the db
             var chosenProduct;
             var chosenProductStock;
             var chosenProductPrice;
             var chosenProductSales;
 
-            //loop through all items in the db to match the inputted id to variables
             for (var i = 0; i < res.length; i++) {
                 if (res[i].id === parseInt(answer.productID)) {
                     chosenProduct = res[i].name;
@@ -96,7 +89,7 @@ function startOrder(){
                 //variable to hold the answer/input amount as an integer
                 var orderedNum = parseInt(answer.quantity);
 
-                //create variable to hold the remaining stock number (to use when updating the DB)
+                // remaining stock number (to use when updating the DB)
                 var remainingStock = chosenProductStock - orderedNum;
                 
                 //testing section for variables
@@ -108,11 +101,8 @@ function startOrder(){
 
                 //if insufficient stock, tell them so
                 if (orderedNum > chosenProductStock){
-                    
-                    //Advise of insuffcient inventory and then show the available amount from the DB
                     console.log("\nI'm sorry, we don't have that may in stock.\n\rWe have " + chosenProductStock + " available for purchase\n");
-
-                    // //ask them if they want to enter a smaller amount
+                    // ask them if they want to enter a smaller amount
                     inquirer.prompt([
                         {
                             name: "reDoQuantity",
@@ -122,11 +112,9 @@ function startOrder(){
                         }
                     ]).then(function(answer){
                         if (!answer.reDoQuantity){
-                            //exit out of system (need to figure out how to show command line, not an empty line)
                             console.log("\nThanks, come back anytime!");
                             return false;
                         }
-                        //if they do, restart order process
                         else {
                             startOrder();
                         }
@@ -175,12 +163,10 @@ function placeAnotherOrder(){
         }
     ]).then(function(answer){
         if (answer.anotherOrder){
-            //if yes, then show items and ask for id
             showItems();
         }
         else {
             console.log("\n\rThank you, come back again!");
-            //how to exit out of it?
             return;
         };
     });

@@ -1,7 +1,6 @@
 //requires for inquirer and mysql
 var inquirer = require("inquirer");
 var mysql = require("mysql");
-
 //for cli-table package
 var Table = require("cli-table");
 
@@ -24,7 +23,6 @@ var connection = mysql.createConnection({
 connection.connect(function(err, res){
     if (err) throw err;
     console.log("connected with ID: " + connection.threadId);
-    //call function to show items avialalbe to order
     supervisorStart();
 });
 
@@ -50,7 +48,7 @@ function supervisorStart(){
     }); 
 };
 
-//function to view sales by department
+
 function viewSales(){
     //query database and join the 2 tables to display as one table
     connection.query("SELECT department_id, department_name, overhead_costs, SUM(product_sales) AS dept_prod_sales FROM products AS p " +
@@ -72,7 +70,6 @@ function viewSales(){
 };
 
 function createDept(){
-    //use inquirer to ask new dept name, and overhead cost
     inquirer.prompt([
         {
             name: "newDeptId",
