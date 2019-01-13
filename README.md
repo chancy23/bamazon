@@ -8,9 +8,9 @@ This is a Command Line Interface (CLI) App that has includes 3 different files, 
 
 ### Video Demo
 You can view the screenshots for each user's roles and all possible use cases, or view a [video demo](https://drive.google.com/file/d/1uiu-oVU9oDjVr7u53-FOVRZtT6Dvj1l_/view?usp=sharing) of all 3 flows (no errors). 
-  
-The information for this app is stored in a MySQL Database with 2 tables (products and departments). To initialize the DB please see the bamazonSchema.sql file. [Click for database schema and seed data](bamazonSchema.sql)
 
+### Database and Schema
+The information for this app is stored in a MySQL Database with 2 tables (products and departments). To initialize the DB please see the bamazonSchema.sql file. [Click for database schema and seed data](bamazonSchema.sql)
 
 ### Customer Functionality
 
@@ -27,7 +27,7 @@ The information for this app is stored in a MySQL Database with 2 tables (produc
 ### Manager Functionality
 
 * The manager is presented with the following options:
-  * [Screenshot](images/bamazon_mgr_start.png)
+* [Screenshot](images/bamazon_mgr_start.png)
 
 
   * View Products for Sale
@@ -56,7 +56,7 @@ The information for this app is stored in a MySQL Database with 2 tables (produc
   * View Product Sales by Department
     * Displays a table that shows Dept ID, Name, Overhead Costs, Products Sales (Sum of all products in that dept), and Total Profit (Product Sales minus Overhead Costs)
     * [Screenshot](images/sup_view_depts.png)
-    
+
    
   * Create New Department
     * Allows a supervisor to create a new department (ID, Name, Overhead Costs).
@@ -69,5 +69,5 @@ The information for this app is stored in a MySQL Database with 2 tables (produc
 *  npm packages: mysql, inquirer, cli-table
 *  Database: MySQL
 
-###Contact
+### Contact
 If you have questions or issues, contact Chancy Leath at chancyleath@hotmail.com
